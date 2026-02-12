@@ -26,17 +26,29 @@ section {
 h2 {
   border-bottom: 2px solid #002147;
   padding-bottom: 5px;
+  margin-bottom: 15px;
 }
 
+/* Default label style (for inputs and selects) */
 label {
   font-weight: bold;
   display: block;
   margin-bottom: 5px;
 }
 
-input, select {
+input,
+select {
   width: 100%;
   padding: 8px;
+  box-sizing: border-box;
+}
+
+/* ===== GRID LAYOUTS ===== */
+
+.grid-1 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 15px;
 }
 
 .grid-3 {
@@ -51,10 +63,54 @@ input, select {
   gap: 15px;
 }
 
+.grid-5 {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 15px;
+}
+
+/* ===== OLD RADIO GROUP (still safe to keep) ===== */
+
 .radio-group label {
   margin-right: 20px;
   font-weight: normal;
 }
+
+/* ===== NEW ENROLLMENT RADIO LAYOUT ===== */
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.group-title {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+/* container of radio buttons */
+.radio-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* radio label row */
+.radio-options label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: normal;
+  cursor: pointer;
+  margin-bottom: 0;
+}
+
+/* fix radio width so it doesn't stretch */
+.radio-options input[type="radio"] {
+  width: auto;
+  padding: 0;
+}
+
+/* ===== SUBMIT BUTTON ===== */
 
 .submit-btn {
   width: 100%;
@@ -63,7 +119,14 @@ input, select {
   color: white;
   border: none;
   cursor: pointer;
+  border-radius: 4px;
 }
+
+.submit-btn:hover {
+  opacity: 0.9;
+}
+
+/* ===== FOOTER ===== */
 
 .footer {
   text-align: center;
@@ -71,8 +134,13 @@ input, select {
   color: #555;
 }
 
+/* ===== RESPONSIVE ===== */
+
 @media (max-width: 768px) {
-  .grid-3, .grid-4 {
+  .grid-1,
+  .grid-3,
+  .grid-4,
+  .grid-5 {
     grid-template-columns: 1fr;
   }
 }
