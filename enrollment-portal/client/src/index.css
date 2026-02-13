@@ -1,146 +1,140 @@
+/* Page background */
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #eef1f5;
+  font-family: 'Roboto', sans-serif;
+  background-color: #f0f2f5;
 }
 
-.header {
-  background: #002147;
-  color: white;
-  text-align: center;
-  padding: 20px;
-}
-
-.form-card {
-  background: white;
-  max-width: 1000px;
-  margin: 30px auto;
+/* Main container */
+.container {
+  max-width: 850px;
+  margin: 40px auto;
   padding: 30px;
-  border-radius: 8px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
-section {
-  margin-bottom: 25px;
+/* Title (keep dark blue) */
+h1 {
+  text-align: center;
+  color: #0b3d91;
+  margin-bottom: 30px;
 }
 
+/* Section headers */
 h2 {
-  border-bottom: 2px solid #002147;
-  padding-bottom: 5px;
-  margin-bottom: 15px;
+  margin-top: 40px;
+  font-size: 20px;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 6px;
+  color: #333;
 }
 
-/* Default label style (for inputs and selects) */
-label {
-  font-weight: bold;
-  display: block;
-  margin-bottom: 5px;
+h3 {
+  margin-top: 25px;
+  font-size: 16px;
+  color: #444;
 }
 
-input,
-select {
-  width: 100%;
-  padding: 8px;
-  box-sizing: border-box;
-}
-
-/* ===== GRID LAYOUTS ===== */
-
-.grid-1 {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 15px;
-}
-
-.grid-3 {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 15px;
-}
-
-.grid-4 {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 15px;
-}
-
-.grid-5 {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 15px;
-}
-
-/* ===== OLD RADIO GROUP (still safe to keep) ===== */
-
-.radio-group label {
-  margin-right: 20px;
-  font-weight: normal;
-}
-
-/* ===== NEW ENROLLMENT RADIO LAYOUT ===== */
-
-.form-group {
+/* Fieldsets */
+fieldset {
+  border: none;
+  padding: 0;
   margin-bottom: 20px;
 }
 
-.group-title {
-  font-weight: 600;
-  margin-bottom: 8px;
+/* Grid layout */
+.grid-2,
+.grid-3,
+.grid-4 {
+  display: grid;
+  gap: 15px;
+  margin-bottom: 20px;
 }
 
-/* container of radio buttons */
-.radio-options {
+.grid-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.grid-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.grid-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+/* Inputs */
+input,
+select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #dadce0;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: #fff;
+  transition: all 0.2s ease;
+}
+
+/* Google-like focus */
+input:focus,
+select:focus {
+  outline: none;
+  border: 2px solid #1a73e8;
+  box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+}
+
+/* ========================= */
+/* FIX FOR RADIO BUTTONS */
+/* ========================= */
+
+.radio-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
+  margin-top: 10px;
 }
 
-/* radio label row */
-.radio-options label {
+.radio-group label {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-weight: normal;
   cursor: pointer;
-  margin-bottom: 0;
 }
 
-/* fix radio width so it doesn't stretch */
-.radio-options input[type="radio"] {
-  width: auto;
-  padding: 0;
+/* Override full width input for radios */
+input[type="radio"] {
+  width: auto;        /* VERY IMPORTANT */
+  padding: 0;         /* remove extra padding */
+  margin: 0;
+  border: none;
+  box-shadow: none;
 }
 
-/* ===== SUBMIT BUTTON ===== */
+/* ========================= */
 
+/* Submit button */
 .submit-btn {
   width: 100%;
-  padding: 15px;
-  background: #002147;
+  padding: 12px;
+  background-color: #1a73e8;
   color: white;
   border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 500;
   cursor: pointer;
-  border-radius: 4px;
+  margin-top: 20px;
+  transition: 0.2s ease;
 }
 
 .submit-btn:hover {
-  opacity: 0.9;
+  background-color: #1558b0;
 }
 
-/* ===== FOOTER ===== */
-
-.footer {
-  text-align: center;
-  padding: 15px;
-  color: #555;
-}
-
-/* ===== RESPONSIVE ===== */
-
-@media (max-width: 768px) {
-  .grid-1,
-  .grid-3,
-  .grid-4,
-  .grid-5 {
-    grid-template-columns: 1fr;
-  }
+/* Error mark */
+.error {
+  color: red;
+  margin-left: 5px;
 }

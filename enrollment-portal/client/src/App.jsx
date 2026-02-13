@@ -4,8 +4,7 @@ export default function App() {
   return (
     <div className="page">
       <header className="header">
-        <h1>University Student Enrollment Portal</h1>
-        <p>Office of the University Registrar</p>
+        <h1>ADEi University Student Enrollment Portal</h1>
       </header>
 
       <EnrollmentForm />

@@ -1,264 +1,309 @@
 import { useState } from "react";
+import "../index.css";
 
-export default function EnrollmentForm() {
-  const [formData, setFormData] = useState({});
-  const [collegeOptions, setCollegeOptions] = useState([]);
-  const [degreeOptions, setDegreeOptions] = useState([]);
+// ================= ENROLLMENT FORM COMPONENT =================
+function EnrollmentForm({ level, setLevel, semester, setSemester, campus, setCampus }) {
+  return (
+    <fieldset>
+      <h2>Enrollment Choices</h2>
 
-  const undergraduatePrograms = {
-    "College of Engineering and Architecture": [
-      "BS Architecture",
-      "BS Chemical Engineering",
-      "BS Civil Engineering",
-      "BS Computer Engineering",
-      "BS Electrical Engineering",
-      "BS Electronics Engineering",
-      "BS Industrial Engineering",
-      "BS Mechanical Engineering"
-    ],
-    "College of Computer Studies": [
-      "BS Computer Science",
-      "BS Data Science and Analytics",
-      "BS Entertainment and Multimedia Computing",
-      "BS Information Technology"
-    ],
-    "College of Business Education": [
-      "BS Accountancy",
-      "BS Accounting Information System",
-      "BS Business Administration",
-      "Financial Management",
-      "Human Resource Management",
-      "Logistics and Supply Chain Management",
-      "Marketing Management"
-    ],
-    "College of Arts": [
-      "Bachelor of Arts in English Language",
-      "Bachelor of Arts in Political Science"
-    ]
+      {/* Academic Level */}
+      <fieldset>
+        <h3>Academic Level</h3>
+        <div className="radio-group">
+          <label>
+            <input
+              type="radio"
+              name="level"
+              value="Undergraduate"
+              checked={level === "Undergraduate"}
+              onChange={(e) => setLevel(e.target.value)}
+            />
+            Undergraduate
+          </label>
+
+          <label>
+            <input
+              type="radio"
+              name="level"
+              value="Graduate"
+              checked={level === "Graduate"}
+              onChange={(e) => setLevel(e.target.value)}
+            />
+            Graduate
+          </label>
+        </div>
+      </fieldset>
+
+      {/* Semester */}
+      <fieldset>
+        <h3>Semester</h3>
+        <div className="radio-group">
+          {["1st Semester", "2nd Semester", "Summer"].map((sem) => (
+            <label key={sem}>
+              <input
+                type="radio"
+                name="semester"
+                value={sem}
+                checked={semester === sem}
+                onChange={(e) => setSemester(e.target.value)}
+              />
+              {sem}
+            </label>
+          ))}
+        </div>
+      </fieldset>
+
+      {/* Campus */}
+      <fieldset>
+        <h3>Campus</h3>
+        <div className="radio-group">
+          {["Manila", "Quezon City"].map((camp) => (
+            <label key={camp}>
+              <input
+                type="radio"
+                name="campus"
+                value={camp}
+                checked={campus === camp}
+                onChange={(e) => setCampus(e.target.value)}
+              />
+              {camp}
+            </label>
+          ))}
+        </div>
+      </fieldset>
+    </fieldset>
+  );
+}
+
+// ================= MAIN APP =================
+function App() {
+  const [level, setLevel] = useState("");
+  const [semester, setSemester] = useState("");
+  const [campus, setCampus] = useState("");
+  const [department, setDepartment] = useState("");
+  const [degree, setDegree] = useState("");
+  const [errors, setErrors] = useState({});
+
+  const degreePrograms = {
+    Undergraduate: {
+      "College of Engineering and Architecture": [
+        "BS Architecture",
+        "BS Chemical Engineering",
+        "BS Civil Engineering",
+        "BS Computer Engineering",
+        "BS Electrical Engineering",
+        "BS Electronics Engineering",
+        "BS Industrial Engineering",
+        "BS Mechanical Engineering",
+      ],
+      "College of Computer Studies": [
+        "BS Computer Science",
+        "BS Data Science and Analytics",
+        "BS Entertainment and Multimedia Computing",
+        "BS Information Technology",
+      ],
+      "College of Business Education": [
+        "BS Accountancy",
+        "BS Accounting Information System",
+        "BS Business Administration - Financial Management",
+        "BS Business Administration - Human Resource Management",
+        "BS Business Administration - Logistics and Supply Chain Management",
+        "BS Business Administration - Marketing Management",
+      ],
+      "College of Arts": [
+        "Bachelor of Arts in English Language",
+        "Bachelor of Arts in Political Science",
+      ],
+    },
+
+    Graduate: {
+      "Doctorate Degrees": [
+        "Doctor in Information Technology",
+        "Doctor of Engineering (Computer Engineering)",
+        "Doctor of Philosophy in Computer Science",
+      ],
+      "Master's Degrees": [
+        "Master in Information Systems",
+        "Master in Information Technology",
+        "Master in Logistics and Supply Chain Management",
+        "Master of Engineering (Civil Engineering)",
+        "Master of Engineering (Computer Engineering)",
+        "Master of Engineering (Electrical Engineering)",
+        "Master of Engineering (Electronics Engineering)",
+        "Master of Engineering (Industrial Engineering)",
+        "Master of Engineering (Mechanical Engineering)",
+        "Master of Science in Computer Science",
+      ],
+    },
   };
 
-  const graduatePrograms = {
-    "Doctorate Degrees": [
-      "Doctor in Information Technology",
-      "Doctor of Engineering with Specialization in Computer Engineering",
-      "Doctor of Philosophy in Computer Science"
-    ],
-    "Master's Degrees": [
-      "Master in Information Systems",
-      "Master in Information Technology",
-      "Master in Logistics and Supply Chain Management",
-      "Master of Engineering with Specialization in Civil Engineering",
-      "Master of Engineering with Specialization in Computer Engineering",
-      "Master of Engineering with Specialization in Electrical Engineering",
-      "Master of Engineering with Specialization in Electronics Engineering",
-      "Master of Engineering with Specialization in Industrial Engineering",
-      "Master of Engineering with Specialization in Mechanical Engineering",
-      "Master of Science in Computer Science"
-    ]
+  const handleDepartmentChange = (e) => {
+    setDepartment(e.target.value);
+    setDegree("");
   };
 
-  const nameRegex = /^[A-Za-z\s]*$/;
-  const numberRegex = /^[0-9]*$/;
+  const handleBlur = (e) => {
+    const { name, value, required } = e.target;
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    if (
-      ["firstName","middleName","lastName","suffix","shsName","jhsName","gsName"].includes(name)
-    ) {
-      if (!nameRegex.test(value)) return;
-    }
-
-    if (
-      ["mobile","landline","zip","shsYear","jhsYear","gsYear","gradeAvg"].includes(name)
-    ) {
-      if (!numberRegex.test(value)) return;
-    }
-
-    const updatedData = { ...formData, [name]: value };
-    setFormData(updatedData);
-
-    if (name === "academicLevel") {
-      const colleges =
-        value === "Undergraduate"
-          ? Object.keys(undergraduatePrograms)
-          : Object.keys(graduatePrograms);
-
-      setCollegeOptions(colleges);
-      setDegreeOptions([]);
-      setFormData({ ...updatedData, college: "", degreeProgram: "" });
-    }
-
-    if (name === "college") {
-      if (updatedData.academicLevel === "Undergraduate") {
-        setDegreeOptions(undergraduatePrograms[value] || []);
-      } else if (updatedData.academicLevel === "Graduate") {
-        setDegreeOptions(graduatePrograms[value] || []);
-      }
+    if (required) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: value.trim() === "" ? true : false,
+      }));
     }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const form = e.target;
+    const newErrors = {};
 
-    const requiredFields = [
-      "firstName", "lastName", "dob", "gender",
-      "email", "mobile", "street", "city",
-      "academicLevel", "semester", "campus", "college", "degreeProgram"
-    ];
-
-    for (let field of requiredFields) {
-      if (!formData[field]) {
-        alert("Please fill all required fields.");
-        return;
+    Array.from(form.elements).forEach((el) => {
+      if (el.required && !el.value) {
+        newErrors[el.name] = true;
       }
-    }
+    });
 
-    if (formData.mobile && formData.mobile.length !== 11) {
-      alert("Mobile number must be 11 digits.");
-      return;
-    }
+    if (!level) newErrors.level = true;
+    if (!semester) newErrors.semester = true;
+    if (!campus) newErrors.campus = true;
+    if (!department) newErrors.department = true;
+    if (!degree) newErrors.degree = true;
 
-    if (formData.zip && formData.zip.length !== 4) {
-      alert("Zip code must be 4 digits.");
-      return;
-    }
+    setErrors(newErrors);
 
-    alert("Enrollment Submitted Successfully!");
-    console.log(formData);
+    if (Object.keys(newErrors).length === 0) {
+      alert("Form submitted successfully!");
+    }
   };
 
+  const availableDepartments = level
+    ? Object.keys(degreePrograms[level])
+    : [];
+
+  const availableDegrees =
+    level && department ? degreePrograms[level][department] || [] : [];
+
   return (
-    <form className="form-card" onSubmit={handleSubmit}>
+    <div className="container">
+      <h1>ADEi University Digital Registration</h1>
 
-      {/* Enrollment Choices */}
-      <section>
-        <h2>Enrollment Choices *</h2>
-
-        {/* Academic Level */}
-        <div className="form-group">
-          <p className="group-title">Academic Level *</p>
-          <div className="radio-options">
-            <label>
-              <input
-                type="radio"
-                name="academicLevel"
-                value="Undergraduate"
-                onChange={handleChange}
-              />
-              Undergraduate School
-            </label>
-
-            <label>
-              <input
-                type="radio"
-                name="academicLevel"
-                value="Graduate"
-                onChange={handleChange}
-              />
-              Graduate School
-            </label>
+      <form onSubmit={handleSubmit}>
+        {/* ================= PERSONAL INFORMATION ================= */}
+        <h2>Personal Information</h2>
+        <fieldset>
+          <div className="grid-4">
+            <input type="text" name="firstName" placeholder="First Name" required onBlur={handleBlur} />
+            <input type="text" name="middleName" placeholder="Middle Name" required onBlur={handleBlur} />
+            <input type="text" name="lastName" placeholder="Last Name" required onBlur={handleBlur} />
+            <input type="text" name="suffix" placeholder="Suffix" />
           </div>
-        </div>
 
-        {/* College */}
-        <div className="form-group">
-          <label>College Department *</label>
-          <select
-            name="college"
-            value={formData.college || ""}
-            required
-            onChange={handleChange}
-          >
-            <option value="">Select College</option>
-            {collegeOptions.map((c) => (
-              <option key={c} value={c}>{c}</option>
-            ))}
-          </select>
-        </div>
-
-        {/* Degree */}
-        <div className="form-group">
-          <label>Degree Program *</label>
-          <select
-            name="degreeProgram"
-            value={formData.degreeProgram || ""}
-            required
-            onChange={handleChange}
-          >
-            <option value="">Select Program</option>
-            {degreeOptions.map((d) => (
-              <option key={d} value={d}>{d}</option>
-            ))}
-          </select>
-        </div>
-
-        {/* Semester */}
-        <div className="form-group">
-          <p className="group-title">Semester *</p>
-          <div className="radio-options">
-            <label>
-              <input
-                type="radio"
-                name="semester"
-                value="1st Semester"
-                onChange={handleChange}
-              />
-              1st Semester
-            </label>
-
-            <label>
-              <input
-                type="radio"
-                name="semester"
-                value="2nd Semester"
-                onChange={handleChange}
-              />
-              2nd Semester
-            </label>
-
-            <label>
-              <input
-                type="radio"
-                name="semester"
-                value="Summer"
-                onChange={handleChange}
-              />
-              Summer
-            </label>
+          <div className="grid-3">
+            <input type="date" name="dob" required onBlur={handleBlur} />
+            <select name="gender" required onBlur={handleBlur}>
+              <option value="">Gender</option>
+              <option>Male</option>
+              <option>Female</option>
+              <option>Non-binary</option>
+            </select>
+            <select name="nationality" required onBlur={handleBlur}>
+              <option value="">Nationality</option>
+              <option>Filipino</option>
+              <option>American</option>
+              <option>Other</option>
+            </select>
           </div>
-        </div>
 
-        {/* Campus */}
-        <div className="form-group">
-          <p className="group-title">Campus *</p>
-          <div className="radio-options">
-            <label>
-              <input
-                type="radio"
-                name="campus"
-                value="Manila"
-                onChange={handleChange}
-              />
-              Manila
-            </label>
+          <input type="text" name="religion" placeholder="Religion" required onBlur={handleBlur} />
+        </fieldset>
 
-            <label>
-              <input
-                type="radio"
-                name="campus"
-                value="Quezon City"
-                onChange={handleChange}
-              />
-              Quezon City
-            </label>
+        {/* ================= CONTACT DETAILS ================= */}
+        <h2>Contact Details</h2>
+        <fieldset>
+          <div className="grid-3">
+            <input type="email" name="email" placeholder="Email" required onBlur={handleBlur} />
+            <input type="number" name="mobile" placeholder="Mobile (11 digits)" required onBlur={handleBlur} />
+            <input type="number" name="landline" placeholder="Landline" />
           </div>
-        </div>
-      </section>
 
-      <button className="submit-btn" type="submit">
-        Submit Registration
-      </button>
-    </form>
+          <div className="grid-4">
+            <input type="text" name="street" placeholder="Street" required onBlur={handleBlur} />
+            <input type="text" name="barangay" placeholder="Barangay" required onBlur={handleBlur} />
+            <input type="text" name="city" placeholder="City" required onBlur={handleBlur} />
+            <input type="text" name="province" placeholder="Province" required onBlur={handleBlur} />
+          </div>
+
+          <div className="grid-2">
+            <input type="number" name="zip" placeholder="Zip Code" required onBlur={handleBlur} />
+          </div>
+        </fieldset>
+
+        {/* ================= ACADEMIC HISTORY ================= */}
+        <h2>Academic History</h2>
+        <fieldset>
+          <legend>Elementary</legend>
+          <div className="grid-3">
+            <input type="text" name="elemName" placeholder="School Name" required onBlur={handleBlur} />
+            <input type="number" name="elemYear" placeholder="Year Graduated" required onBlur={handleBlur} />
+            <input type="text" name="elemAddress" placeholder="Address" required onBlur={handleBlur} />
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Junior High</legend>
+          <div className="grid-3">
+            <input type="text" name="jhsName" placeholder="School Name" required onBlur={handleBlur} />
+            <input type="number" name="jhsYear" placeholder="Year Graduated" required onBlur={handleBlur} />
+            <input type="text" name="jhsAddress" placeholder="Address" required onBlur={handleBlur} />
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Senior High</legend>
+          <div className="grid-4">
+            <input type="text" name="shsName" placeholder="School Name" required onBlur={handleBlur} />
+            <input type="number" name="shsYear" placeholder="Year Graduated" required onBlur={handleBlur} />
+            <input type="text" name="shsAverage" placeholder="Grade Average" required onBlur={handleBlur} />
+            <input type="text" name="shsAddress" placeholder="Address" required onBlur={handleBlur} />
+          </div>
+        </fieldset>
+
+        {/* ================= ENROLLMENT CHOICES ================= */}
+        <EnrollmentForm
+          level={level}
+          setLevel={setLevel}
+          semester={semester}
+          setSemester={setSemester}
+          campus={campus}
+          setCampus={setCampus}
+        />
+
+        {/* ================= DEPARTMENT & DEGREE ================= */}
+        <h3>Department</h3>
+        <select value={department} onChange={handleDepartmentChange}>
+          <option value="">Select Department</option>
+          {availableDepartments.map((dep) => (
+            <option key={dep} value={dep}>{dep}</option>
+          ))}
+        </select>
+
+        <h3>Degree</h3>
+        <select value={degree} onChange={(e) => setDegree(e.target.value)}>
+          <option value="">Select Degree</option>
+          {availableDegrees.map((deg) => (
+            <option key={deg} value={deg}>{deg}</option>
+          ))}
+        </select>
+
+        {/* ================= SUBMIT BUTTON ================= */}
+        <button type="submit" className="submit-btn">
+          Submit Registration
+        </button>
+      </form>
+    </div>
   );
 }
+
+export default App;
