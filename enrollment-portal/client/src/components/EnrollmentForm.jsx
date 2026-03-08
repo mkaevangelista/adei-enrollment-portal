@@ -146,11 +146,113 @@ function App() {
   const handleBlur = (e) => {
     const { name, value, required } = e.target;
 
+    // Restrict input for number fields and grade average
+    if (["mobile", "zip", "elemYear", "jhsYear", "landline", "shsYear", "shsAverage"].includes(name)) {
+      const onlyDigits = /^\d+$/;
+      let valid = onlyDigits.test(value);
+      let customMsg = "";
+      if (value.trim() === "") {
+        valid = false;
+        customMsg = "This field is required.";
+      }
+      if (name === "mobile") {
+        if (value.length !== 11) {
+          valid = false;
+          customMsg = "Mobile number must be exactly 11 digits.";
+        }
+      }
+      if (name === "landline") {
+        if (value.length !== 8) {
+          valid = false;
+          customMsg = "Landline must be exactly 8 digits.";
+        }
+      }
+      if (name === "zip") {
+        if (value.length < 4 || value.length > 5) {
+          valid = false;
+          customMsg = "Zip code must be 4 to 5 digits.";
+        }
+      }
+      if (name === "shsAverage") {
+        if (/\D/.test(value)) {
+          valid = false;
+          customMsg = "Grade average must only contain numbers.";
+        } else if (value.trim() === "") {
+          valid = false;
+          customMsg = "This field is required.";
+        } else {
+          const num = Number(value);
+          if (isNaN(num) || num < 0 || num > 100) {
+            valid = false;
+            customMsg = "Grade average must be between 0 and 100.";
+          }
+        }
+      }
+      if (!valid) {
+        e.target.setCustomValidity(customMsg || "Only digits are allowed.");
+      } else {
+        e.target.setCustomValidity("");
+      }
+      setErrors((prev) => ({
+        ...prev,
+        [name]: !valid,
+      }));
+      return;
+    }
+
+    // Restrict input for name, school name, religion, city, and province fields
+    if (["firstName", "middleName", "lastName", "elemName", "jhsName", "shsName", "religion", "city", "province"].includes(name)) {
+      const hasNumber = /\d/.test(value);
+      let valid = !hasNumber && value.trim() !== "";
+      let customMsg = "";
+      if (hasNumber) {
+        customMsg = "This field must not contain numbers.";
+      } else if (value.trim() === "") {
+        customMsg = "This field is required.";
+      }
+      if (!valid) {
+        e.target.setCustomValidity(customMsg);
+      } else {
+        e.target.setCustomValidity("");
+      }
+      setErrors((prev) => ({
+        ...prev,
+        [name]: !valid,
+      }));
+      return;
+    }
+
     if (required) {
       setErrors((prev) => ({
         ...prev,
         [name]: value.trim() === "" ? true : false,
       }));
+    }
+    e.target.setCustomValidity("");
+  };
+
+  // Real-time input restriction for number fields
+  const handleInput = (e) => {
+    const { name, value } = e.target;
+    if (["mobile", "zip", "elemYear", "jhsYear", "landline", "shsYear"].includes(name)) {
+      // Remove non-digit characters
+      let newValue = value.replace(/[^\d]/g, "");
+      if (name === "landline") {
+        newValue = newValue.slice(0, 8); // Restrict to 8 digits
+      }
+      e.target.value = newValue;
+    }
+    if (["firstName", "middleName", "lastName", "elemName", "jhsName", "shsName", "religion", "city", "province"].includes(name)) {
+      // Remove digits from name, school name, religion, city, and province fields
+      e.target.value = value.replace(/[\d]/g, "");
+    }
+    if (["shsAverage"].includes(name)) {
+      // Remove all non-digit characters and restrict to 0-100
+      let numeric = value.replace(/\D/g, "");
+      let num = Number(numeric);
+      if (num > 100) num = 100;
+      if (num < 0) num = 0;
+      e.target.value = num ? String(num) : "";
     }
   };
 
@@ -194,9 +296,9 @@ function App() {
         <h2>Personal Information</h2>
         <fieldset>
           <div className="grid-4">
-            <input type="text" name="firstName" placeholder="First Name" required onBlur={handleBlur} />
-            <input type="text" name="middleName" placeholder="Middle Name" required onBlur={handleBlur} />
-            <input type="text" name="lastName" placeholder="Last Name" required onBlur={handleBlur} />
+            <input type="text" name="firstName" placeholder="First Name" required onBlur={handleBlur} onInput={handleInput} />
+            <input type="text" name="middleName" placeholder="Middle Name" required onBlur={handleBlur} onInput={handleInput} />
+            <input type="text" name="lastName" placeholder="Last Name" required onBlur={handleBlur} onInput={handleInput} />
             <input type="text" name="suffix" placeholder="Suffix" />
           </div>
 
@@ -216,7 +318,7 @@ function App() {
             </select>
           </div>
 
-          <input type="text" name="religion" placeholder="Religion" required onBlur={handleBlur} />
+          <input type="text" name="religion" placeholder="Religion" required onBlur={handleBlur} onInput={handleInput} />
         </fieldset>
 
         {/* ================= CONTACT DETAILS ================= */}
@@ -224,19 +326,20 @@ function App() {
         <fieldset>
           <div className="grid-3">
             <input type="email" name="email" placeholder="Email" required onBlur={handleBlur} />
-            <input type="number" name="mobile" placeholder="Mobile (11 digits)" required onBlur={handleBlur} />
-            <input type="number" name="landline" placeholder="Landline" />
+            <input type="number" name="mobile" placeholder="Mobile" required onBlur={handleBlur} onInput={handleInput} />
+            <input type="number" name="landline" placeholder="Landline" onInput={handleInput} onBlur={handleBlur} />
           </div>
 
           <div className="grid-4">
             <input type="text" name="street" placeholder="Street" required onBlur={handleBlur} />
             <input type="text" name="barangay" placeholder="Barangay" required onBlur={handleBlur} />
-            <input type="text" name="city" placeholder="City" required onBlur={handleBlur} />
-            <input type="text" name="province" placeholder="Province" required onBlur={handleBlur} />
+            <input type="text" name="city" placeholder="City" required onBlur={handleBlur} onInput={handleInput} />
+            <input type="text" name="province" placeholder="Province" required onBlur={handleBlur} onInput={handleInput} />
           </div>
 
           <div className="grid-2">
-            <input type="number" name="zip" placeholder="Zip Code" required onBlur={handleBlur} />
+            <input type="number" name="zip" placeholder="Zip Code" required onBlur={handleBlur} onInput={handleInput} />
+            <input type="time" name="time" min="08:00" max="17:00" required onBlur={handleBlur} />
           </div>
         </fieldset>
 
@@ -245,8 +348,8 @@ function App() {
         <fieldset>
           <legend>Elementary</legend>
           <div className="grid-3">
-            <input type="text" name="elemName" placeholder="School Name" required onBlur={handleBlur} />
-            <input type="number" name="elemYear" placeholder="Year Graduated" required onBlur={handleBlur} />
+            <input type="text" name="elemName" placeholder="School Name" required onBlur={handleBlur} onInput={handleInput} />
+            <input type="number" name="elemYear" placeholder="Year Graduated" required onBlur={handleBlur} onInput={handleInput} />
             <input type="text" name="elemAddress" placeholder="Address" required onBlur={handleBlur} />
           </div>
         </fieldset>
@@ -254,8 +357,8 @@ function App() {
         <fieldset>
           <legend>Junior High</legend>
           <div className="grid-3">
-            <input type="text" name="jhsName" placeholder="School Name" required onBlur={handleBlur} />
-            <input type="number" name="jhsYear" placeholder="Year Graduated" required onBlur={handleBlur} />
+            <input type="text" name="jhsName" placeholder="School Name" required onBlur={handleBlur} onInput={handleInput} />
+            <input type="number" name="jhsYear" placeholder="Year Graduated" required onBlur={handleBlur} onInput={handleInput} />
             <input type="text" name="jhsAddress" placeholder="Address" required onBlur={handleBlur} />
           </div>
         </fieldset>
@@ -263,14 +366,14 @@ function App() {
         <fieldset>
           <legend>Senior High</legend>
           <div className="grid-4">
-            <input type="text" name="shsName" placeholder="School Name" required onBlur={handleBlur} />
-            <input type="number" name="shsYear" placeholder="Year Graduated" required onBlur={handleBlur} />
-            <input type="text" name="shsAverage" placeholder="Grade Average" required onBlur={handleBlur} />
+            <input type="text" name="shsName" placeholder="School Name" required onBlur={handleBlur} onInput={handleInput} />
+            <input type="number" name="shsYear" placeholder="Year Graduated" required onBlur={handleBlur} onInput={handleInput} />
+            <input type="text" name="shsAverage" placeholder="Grade Average" required min="0" max="100" onBlur={handleBlur} onInput={handleInput} />
             <input type="text" name="shsAddress" placeholder="Address" required onBlur={handleBlur} />
           </div>
         </fieldset>
 
-        {/* ================= ENROLLMENT CHOICES ================= */}
+        {/* ================= ENROLLMENT CHOICES (REPLACED) ================= */}
         <EnrollmentForm
           level={level}
           setLevel={setLevel}
